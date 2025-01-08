@@ -55,22 +55,16 @@ def create_retrieval_qa_chain(
         # Define prompt template
         logging.info("Defining prompt template...")
         prompt_template = ChatPromptTemplate.from_template("""
-        You are an expert assistant focused on providing precise, concise, and direct answers. 
-        Use ONLY the following context to answer the question:
+        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. If the required information is not found in the context, respond only with "I don't know."
 
-        Context:
+        ### Context:
         {context}
 
-        Question: {question}
+        ### Question:
+        {question}
 
-        Guidelines:
-        1. Provide clear, straightforward answers
-        2. Use simple, easy-to-understand language
-        3. Be factual and to the point
-        4. Prioritize clarity and brevity
-        5. Tailor response length to question complexity
-
-        Answer:""")
+        ### Answer:
+        """)
         logging.info("Prompt template successfully created.")
         
         # Function to format documents

@@ -9,3 +9,10 @@ venv/
 *.swp
 *.swo
 *.DS_Store
+
+# Uploads directory
+uploads/
+
+# Vector store directory
+vector_store/
+

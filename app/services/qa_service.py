@@ -55,7 +55,7 @@ def create_retrieval_qa_chain(
         # Define prompt template
         logging.info("Defining prompt template...")
         prompt_template = ChatPromptTemplate.from_template("""
-        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. If the required information is not found in the context, respond only with "I don't know."
+        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. If the required information is not found in the context, respond only with "LLM unable to find answer"
 
         ### Context:
         {context}

@@ -40,3 +40,6 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8080
 ### 2. Access the API Documentation
 - **For Local Testing:** [http://127.0.0.1:8080/docs](http://127.0.0.1:8080/docs)  
 - **For Remote AWS Server:** [http://18.210.142.6:8080/docs](http://18.210.142.6:8080/docs)
+
+Attach LLm Screen :- screen -r 1118.pts-0.ip-172-31-34-64
+and for detach :- Ctrl+A, D.

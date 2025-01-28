@@ -168,7 +168,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def create_retrieval_qa_chain(
     vector_store_path: str, 
-    model: str = LLM_MODEL,
+    model: str,
     embedding_model: str = 'all-MiniLM-L6-v2',  # Default Sentence Transformer model
     search_kwargs: dict = {'k': 3}
 ):
@@ -210,7 +210,7 @@ def create_retrieval_qa_chain(
         # Define prompt template
         logging.info("Defining prompt template...")
         prompt_template = ChatPromptTemplate.from_template("""
-        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. If the required information is not found in the context, respond only with "LLM unable to find answer"
+        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. Your responses should be friendly, conversational, and easy to understand. If the required information is not found in the context, respond only with "LLM unable to find answer"
 
         ### Context:
         {context}
@@ -244,6 +244,7 @@ def create_retrieval_qa_chain(
             | StrOutputParser()
         )
         logging.info("Retrieval QA chain successfully created.")
+        logging.info(f"LLm model is {model}")
         
         return chain
 
@@ -254,7 +255,7 @@ def create_retrieval_qa_chain(
 def get_answer(
     question: str, 
     vector_store_path: str, 
-    model: str = LLM_MODEL,
+    model: str,
     search_kwargs: dict = {'k': 3}
 ) -> str:
     """

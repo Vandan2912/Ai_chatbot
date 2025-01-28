@@ -19,8 +19,8 @@ async def ask_question(request: QuestionRequest):
 
     try:
         # Get answer using the QA service
-        answer = get_answer(request.question, vector_store_path)
-        return {"question": request.question, "answer": answer}
+        answer = get_answer(request.question, vector_store_path, model=request.model)
+        return {"question": request.question, "answer": answer, "model": request.model}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -43,3 +43,7 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8080
 
 Attach LLm Screen :- screen -r 1118.pts-0.ip-172-31-34-64
 and for detach :- Ctrl+A, D.
+
+# Available Modes is 
+# 1. llama3.1:8b
+# 2. deepseek-v2:16b

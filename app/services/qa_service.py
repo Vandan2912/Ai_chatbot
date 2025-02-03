@@ -210,16 +210,22 @@ def create_retrieval_qa_chain(
         # Define prompt template
         logging.info("Defining prompt template...")
         prompt_template = ChatPromptTemplate.from_template("""
-        You are an AI assistant tasked with answering questions accurately and concisely based solely on the provided context. Your responses should be friendly, conversational, and easy to understand. If the required information is not found in the context, respond only with "LLM unable to find answer"
-
-        ### Context:
+        You are an expert assistant focused on providing precise, concise, and direct answers. 
+        Use ONLY the following context to answer the question:
+                                                           
+        Context:
         {context}
-
-        ### Question:
-        {question}
-
-        ### Answer:
-        """)
+                                                           
+        Question: {question}
+                                                           
+        Guidelines:
+        1. Provide clear, straightforward answers
+        2. Use simple, easy-to-understand language
+        3. Be factual and to the point
+        4. Prioritize clarity and brevity
+        5. Tailor response length to question complexity
+        Answer:""")
+        
         logging.info("Prompt template successfully created.")
         
         # Function to format documents

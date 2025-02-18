@@ -7,5 +7,6 @@ langchain-ollama
 ollama
 python-multipart
 pypdf
-# faiss-cpu
-faiss-gpu
+faiss-cpu
+requests
+# faiss-gpu

@@ -33,8 +33,21 @@ pip install -r requirements.txt
 ## Running the Application
 
 ### 1. Start the Server
+
+* main:app: Specifies the FastAPI application instance (app) in the main.py file.
+
+* --workers 4: Sets the number of worker processes to 4 (adjust as needed). A common recommendation is (2 x $num_cores) + 1.
+
+* --worker-class uvicorn.workers.UvicornWorker: Specifies the worker class to use, which enables Gunicorn to work with ASGI applications.
+
+* --bind 0.0.0.0:8000: Binds the application to all interfaces on port 8000.
+
 ```bash
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8080
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8080 --workers 4
+```
+
+```bash
+gunicorn app.main:app -c gunicorn_config.py
 ```
 
 ### 2. Access the API Documentation

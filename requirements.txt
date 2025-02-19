@@ -9,4 +9,5 @@ python-multipart
 pypdf
 faiss-cpu
 requests
+gunicorn
 # faiss-gpu

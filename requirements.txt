@@ -10,4 +10,5 @@ pypdf
 faiss-cpu
 requests
 gunicorn
+langchain-huggingface
 # faiss-gpu

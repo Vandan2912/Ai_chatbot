@@ -1,9 +1,5 @@
-# gunicorn_config.py
-
-# Number of worker processes
-workers = 4
-
 # Host and port to bind to
+workers = 4
 bind = "0.0.0.0:8080"
 
 # Worker class to use

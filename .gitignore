@@ -15,4 +15,8 @@ uploads/
 
 # Vector store directory
 vector_store/
+vector_store
 
+access.log
+error.log
+.env

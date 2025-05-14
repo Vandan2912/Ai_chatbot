@@ -153,6 +153,7 @@
 
 
 import logging
+import os
 from typing import Optional, List
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -160,8 +161,13 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.llms import Ollama
+from langchain_openai import ChatOpenAI
 from langchain_core.documents import Document
 from app.utils.Constant import LLM_MODEL
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -176,10 +182,14 @@ def create_retrieval_qa_chain(
     search_kwargs: dict = {"k": 3},
 ):
     """
-    Create a retrieval QA chain with Ollama LLM and FAISS vector store using HuggingFace embeddings.
+    Create a retrieval QA chain with Ollama, OpenAI, or DeepSeek LLM and FAISS vector store using HuggingFace embeddings.
+    The model type is determined by the model name.
 
     :param vector_store_path: Path to the persistent FAISS vector store
-    :param model: Ollama model to use
+    :param model: Model name to use. The API is selected based on the model name:
+                 - OpenAI models: ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"]
+                 - DeepSeek models: ["deepseek-chat", "deepseek-coder"]
+                 - All other model names will use Ollama
     :param embedding_model: Sentence Transformer model for embeddings
     :param search_kwargs: Retriever search configuration
     :return: Configured retrieval QA chain
@@ -253,10 +263,38 @@ def create_retrieval_qa_chain(
             logging.info("Document formatting complete.")
             return formatted_docs
 
-        # Create Ollama LLM
-        logging.info(f"Initializing Ollama LLM with model: {model}")
-        llm = Ollama(model=model, temperature=0)
-        logging.info("Ollama LLM initialized successfully.")
+        # Determine which API to use based on model name
+        openai_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o", "gpt-4o-mini"]
+        deepseek_models = ["deepseek-chat"]
+        
+        if model in openai_models:
+            # Use OpenAI
+            api_key = os.environ.get("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError("OpenAI API key must be set via OPENAI_API_KEY environment variable")
+                
+            logging.info(f"Initializing OpenAI LLM with model: {model}")
+            llm = ChatOpenAI(model=model, temperature=0, api_key=api_key)
+            logging.info("OpenAI LLM initialized successfully.")
+        elif model in deepseek_models:
+            # Use DeepSeek via OpenAI-compatible API
+            api_key = os.environ.get("DEEPSEEK_API_KEY")
+            if not api_key:
+                raise ValueError("DeepSeek API key must be set via DEEPSEEK_API_KEY environment variable")
+                
+            logging.info(f"Initializing DeepSeek LLM with model: {model}")
+            llm = ChatOpenAI(
+                model=model,
+                temperature=0,
+                api_key=api_key,
+                base_url="https://api.deepseek.com/v1"
+            )
+            logging.info("DeepSeek LLM initialized successfully.")
+        else:
+            # Use Ollama
+            logging.info(f"Initializing Ollama LLM with model: {model}")
+            llm = Ollama(model=model, temperature=0)
+            logging.info("Ollama LLM initialized successfully.")
 
         # Construct the chain
         logging.info("Constructing retrieval QA chain...")
@@ -280,11 +318,14 @@ def get_answer(
     question: str, vector_store_path: str, model: str, search_kwargs: dict = {"k": 3}
 ) -> str:
     """
-    Generate an answer to a question based on a PDF's vector store using Ollama and FAISS.
+    Generate an answer to a question based on a PDF's vector store using Ollama, OpenAI, or DeepSeek and FAISS.
 
     :param question: The question to ask
     :param vector_store_path: Path to the persistent FAISS vector store
-    :param model: Ollama model to use
+    :param model: Model name to use. The API is selected based on the model name:
+                 - OpenAI models: ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"]
+                 - DeepSeek models: ["deepseek-chat"]
+                 - All other model names will use Ollama
     :param search_kwargs: Retriever search configuration
     :return: Generated answer
     """

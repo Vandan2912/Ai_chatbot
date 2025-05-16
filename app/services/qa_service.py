@@ -60,6 +60,8 @@
 #         ### Context:
 #         {context}
 
+#         {chat_history}
+
 #         ### Question:
 #         {question}
 
@@ -180,6 +182,7 @@ def create_retrieval_qa_chain(
     model: str,
     embedding_model: str = "all-MiniLM-L6-v2",  # Default Sentence Transformer model
     search_kwargs: dict = {"k": 3},
+    chat_history: list = None,
 ):
     """
     Create a retrieval QA chain with Ollama, OpenAI, or DeepSeek LLM and FAISS vector store using HuggingFace embeddings.
@@ -246,6 +249,9 @@ def create_retrieval_qa_chain(
     ### Context:
     {context}
 
+    ### Chat History:
+    {chat_history_text}
+
     ### Question:
     {question}
 
@@ -296,10 +302,26 @@ def create_retrieval_qa_chain(
             llm = Ollama(model=model, temperature=0)
             logging.info("Ollama LLM initialized successfully.")
 
+        # Format chat history if provided
+        def format_chat_history(history):
+            if not history or len(history) == 0:
+                return {"chat_history_text": ""}
+            
+            formatted_history = "### Chat History:\n"
+            for i, message in enumerate(history):
+                formatted_history += f"Q{i+1}: {message.question}\n"
+                formatted_history += f"A{i+1}: {message.answer}\n\n"
+            
+            return {"chat_history_text": formatted_history}
+        
         # Construct the chain
         logging.info("Constructing retrieval QA chain...")
         chain = (
-            {"context": retriever | format_docs, "question": RunnablePassthrough()}
+            {
+                "context": retriever | format_docs, 
+                "question": RunnablePassthrough(),
+                "chat_history_text": lambda x: format_chat_history(chat_history).get("chat_history_text")
+            }
             | prompt_template
             | llm
             | StrOutputParser()
@@ -315,7 +337,7 @@ def create_retrieval_qa_chain(
 
 
 def get_answer(
-    question: str, vector_store_path: str, model: str, search_kwargs: dict = {"k": 3}
+    question: str, vector_store_path: str, model: str, search_kwargs: dict = {"k": 3}, chat_history: list = None
 ) -> str:
     """
     Generate an answer to a question based on a PDF's vector store using Ollama, OpenAI, or DeepSeek and FAISS.
@@ -327,6 +349,7 @@ def get_answer(
                  - DeepSeek models: ["deepseek-chat"]
                  - All other model names will use Ollama
     :param search_kwargs: Retriever search configuration
+    :param chat_history: List of previous question-answer pairs for conversation context
     :return: Generated answer
     """
     try:
@@ -338,6 +361,7 @@ def get_answer(
             vector_store_path=vector_store_path,
             model=model,
             search_kwargs=search_kwargs,
+            chat_history=chat_history,
         )
         logging.info("Retrieval QA chain initialized successfully.")
 

@@ -19,7 +19,12 @@ async def ask_question(request: QuestionRequest):
 
     try:
         # Get answer using the QA service
-        answer = get_answer(request.question, vector_store_path, model=request.model)
+        answer = get_answer(
+            question=request.question, 
+            vector_store_path=vector_store_path, 
+            model=request.model,
+            chat_history=request.history
+        )
         return {"question": request.question, "answer": answer, "model": request.model}
 
     except Exception as e:

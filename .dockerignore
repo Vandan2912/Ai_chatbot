@@ -1,0 +1,78 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.sublime-*
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Documentation and development files
+README.md
+*.md
+docs/
+
+# Environment files (keep structure but not actual secrets)
+.env
+.env.*
+!env_example
+
+# Log files
+*.log
+access.log
+error.log
+logs/
+
+# Test files
+test.py
+tests/
+test_*.py
+*_test.py
+
+# Uploads directory (should be mounted as volume)
+uploads/
+
+# Vector store directory (should be persistent volume)
+vector_store/
+
+# Development and build artifacts
+.pytest_cache/
+.coverage
+.tox/
+dist/
+build/
+*.egg-info/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Docker files themselves
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Requirements backup/alternative files
+requirements-dev.txt
+requirements-test.txt

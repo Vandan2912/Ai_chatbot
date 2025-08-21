@@ -13,4 +13,5 @@ gunicorn
 langchain-huggingface
 gunicorn
 torch
+sentence_transformers
 # faiss-gpu
